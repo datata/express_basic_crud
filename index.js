@@ -2,9 +2,22 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan');
 require('dotenv').config();
+const sequelize = require('./database/config');
 
 app.use(morgan('dev'));
 app.use(express.json());
+
+const db = async() => {
+    try {
+        await sequelize.authenticate();
+        console.log('Connection has been established successfully.');
+      } catch (error) {
+        console.error('Unable to connect to the database:', error);
+        return 'error'
+      }
+}
+
+db();
 
 let tasks = [
     {
