@@ -13,23 +13,7 @@ app.get('/', (req, res) => {
     res.send('Tasks App!');
 });
 
-app.use(require('./routes/task'));
-
-app.post('/task', async (req, res) => {
-    try {
-        const { title } = req.body;
-
-        if (!title)
-            return res.status(400).json({ data: { message: 'Title is required' } });
-
-        const newTask = await Task.create({ title });
-
-        return res.status(201).json({ data: newTask });
-    } catch (error) {
-        console.error("Error creating task-> ", error.message);
-        return res.status(500).json({ error: { message: 'Error creating task' } });
-    }
-});
+app.use(require('./routes'));
 
 app.listen(port, () =>
     console.log('Server listening on port->', port)
