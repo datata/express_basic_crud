@@ -12,7 +12,7 @@ Accept: application/json
 Content-Type: application/json
 
 {       
-    "title": "Comprar",
+    "title": "vender",
     "completed": true
 }
 
@@ -21,14 +21,9 @@ GET http://localhost:3000/tasks
 Accept: application/json
 
 ###
-GET http://localhost:3000/task/17
+GET http://localhost:3000/task/19
 Accept: application/json
 
 ###
-DELETE http://localhost:3000/task/18
+DELETE http://localhost:3000/task/22
 Accept: application/json
-
-###
-GET http://localhost:3000/tasks/destroy
-Accept: application/json
-
