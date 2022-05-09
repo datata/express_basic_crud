@@ -2,7 +2,6 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan');
 require('dotenv').config();
-const { Task } = require("./models/index");
 
 app.use(morgan('dev'));
 app.use(express.json());
