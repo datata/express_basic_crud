@@ -6,13 +6,15 @@ module.exports = {
     "database": process.env.DB_DATABASE || "",
     "host": process.env.DB_HOST || "127.0.0.1",
     "dialect": process.env.DB_CONNECTION || "mysql",
+    "logging": true,
   },
   "test": {
     "username": "root",
     "password": null,
     "database": "database_test",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "logging": false,
   },
   "production": {
     "username": process.env.DB_USERNAME,
@@ -21,5 +23,6 @@ module.exports = {
     "host": process.env.DB_HOST,
     "use_env_variable": "CLEARDB_DATABASE_URL",
     "dialect": process.env.DB_CONNECTION || "mysql",
+    "logging": false,
   }
 }
