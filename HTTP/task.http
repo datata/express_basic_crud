@@ -2,7 +2,17 @@ POST http://localhost:3000/task
 Accept: application/json
 Content-Type: application/json
 
-{
+{       
+    "title": "test"
+}
+
+###
+PUT http://localhost:3000/task/19
+Accept: application/json
+Content-Type: application/json
+
+{       
+    "title": "Comprar",
     "completed": true
 }
 
@@ -11,11 +21,11 @@ GET http://localhost:3000/tasks
 Accept: application/json
 
 ###
-GET http://localhost:3000/task/1
+GET http://localhost:3000/task/17
 Accept: application/json
 
 ###
-DELETE http://localhost:3000/task/1
+DELETE http://localhost:3000/task/18
 Accept: application/json
 
 ###

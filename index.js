@@ -2,35 +2,10 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan');
 require('dotenv').config();
-const sequelize = require('./database/config');
+const { Task } = require("./models/index");
 
 app.use(morgan('dev'));
 app.use(express.json());
-
-const db = async() => {
-    try {
-        await sequelize.authenticate();
-        console.log('Connection has been established successfully.');
-      } catch (error) {
-        console.error('Unable to connect to the database:', error);
-        return 'error'
-      }
-}
-
-db();
-
-let tasks = [
-    {
-        id: 1,
-        name: 'Task 1',
-        completed: false
-    },
-    {
-        id: 2,
-        name: 'Task 2',
-        completed: false
-    }
-];
 
 const port = process.env.PORT || 4000;
 
@@ -38,75 +13,91 @@ app.get('/', (req, res) => {
     res.send('Tasks App!');
 });
 
-app.get('/tasks', (req, res) => {
-    if(tasks.length < 1) 
-        return res.status(201).json({data:{message: 'No tasks found'}});
-    
-    return res.json(tasks);
+app.get('/tasks', async (req, res) => {
+    try {
+        const tasks = await Task.findAll();
+
+        if (tasks.length < 1)
+            return res.status(404).json({ data: { message: 'No tasks found' } });
+
+        return res.status(200).json({ data: tasks });
+    } catch (error) {
+        console.error(error.message);
+        return res.status(500).json({ error: { message: 'Server error' } });
+    }
 });
 
-app.post('/task', (req, res) => {
-    const { name, completed } = req.body;
+app.post('/task', async (req, res) => {
+    try {
+        const { title } = req.body;
 
-    if(!name || !completed)
-        return res.status(400).json({data:{message: 'Please provide name and completed'}});
+        if (!title)
+            return res.status(400).json({ data: { message: 'Title is required' } });
 
-    arrayLength = tasks.length;
+        const newTask = await Task.create({ title });
 
-    const lastId = tasks[arrayLength - 1].id;
-
-    const task = {
-        id: lastId + 1 ,
-        name,
-        completed
-    };
-
-    tasks.push(task);
-
-    return res.status(201).json({data: task});
+        return res.status(201).json({ data: newTask });
+    } catch (error) {
+        console.error("Error creating task-> ", error.message);
+        return res.status(500).json({ error: { message: 'Error creating task' } });
+    }
 });
 
-app.put('/task/:id', (req, res) => {
-    const { id } = req.params;
-    const { name, completed } = req.body;
+app.put('/task/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { title, completed } = req.body;
 
-    const task = tasks.find(task => task.id === parseInt(id));
-    
-    if(!task) 
-        return res.status(404).json({data:{message: 'Task not found'}});    
-    
-    task.name = name;
-    task.completed = completed;
+        const task = await Task.findOne({ where: { id } });
 
-    return res.json(task);
+        if (!task)
+            return res.status(404).json({ data: { message: 'Task not found' } });
+
+        if (title) task.title = title;
+        if (completed) task.completed = completed;
+
+        await Task.update(req.body, { where: { id } });
+
+        return res.status(200).json({ data: { message: 'Task updated' } });
+    } catch (error) {
+        console.log("Error updating task-> ", error.message);
+        return res.status(500).json({ error: { message: 'Error updating task' } });
+    }
 });
 
-app.delete('/task/:id', (req, res) => {    
-    const task = tasks.find(task => task.id === parseInt(req.params.id));
+app.delete('/task/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
 
-    if(!task)
-        return res.status(404).json({data:{message: 'Task not found'}});
+        const task = await Task.findOne({ where: { id } });
 
-    tasks.splice(tasks.indexOf(task), 1);
+        if (!task)
+            return res.status(404).json({ data: { message: 'Task not found' } });
 
-    return res.json({data: {message: 'Task deleted'}});
+        task.destroy()
+
+        return res.status(200).json({ data: 'Task deleted' });
+    } catch (error) {
+        console.error("Error deleting task-> ", error.message);
+        return res.status(500).json({ error: { message: 'Server error' } });
+    }
 });
 
-app.get('/task/:id', (req, res) => {
-    const task = tasks.find(task => task.id === parseInt(req.params.id));
+app.get('/task/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
 
-    if(!task)
-        return res.status(404).json({data:{message: 'Task not found'}});
+        const task = await Task.findOne({ where: { id } });
 
-    return res.status(200).json(task);
+
+        if (!task)
+            return res.status(404).json({ data: { message: 'Task not found' } });
+
+        return res.status(200).json(task);
+    } catch (error) {
+        return res.status(500).json({ error: { message: 'Server error' } });
+    }
 });
-
-app.get('/tasks/destroy', (req, res) => {
-    tasks = [];
-
-    return res.json({data: {message: 'All tasks deleted'}});
-});
-
 
 app.listen(port, () =>
     console.log('Server listening on port->', port)
