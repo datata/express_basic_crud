@@ -1,4 +1,4 @@
-POST http://localhost:3000/task
+POST http://localhost:3000/api/task
 Accept: application/json
 Content-Type: application/json
 
@@ -7,7 +7,7 @@ Content-Type: application/json
 }
 
 ###
-PUT http://localhost:3000/task/19
+PUT http://localhost:3000/api/task/19
 Accept: application/json
 Content-Type: application/json
 
@@ -17,13 +17,13 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:3000/tasks
+GET http://localhost:3000/api/tasks
 Accept: application/json
 
 ###
-GET http://localhost:3000/task/19
+GET http://localhost:3000/api/task/19
 Accept: application/json
 
 ###
-DELETE http://localhost:3000/task/22
+DELETE http://localhost:3000/api/task/21
 Accept: application/json
