@@ -3,6 +3,10 @@ const app = express();
 const morgan = require('morgan');
 require('dotenv').config();
 
+const dbConnection = require('./config/database');
+
+dbConnection();
+
 app.use(morgan('dev'));
 app.use(express.json());
 
